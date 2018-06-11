@@ -225,7 +225,7 @@
   
           this.$http.post('http://localhost:8080/auth/register', formData).then(function(response) {
             if (response.body) {
-              if (response.body.msg == 'registered new user') {
+              if (response.status == 200) {
                 $('#registerModal').modal('hide')
                 $('.modal').on('hidden.bs.modal', function() {
                   $(this).find('form')[0].reset();
@@ -238,7 +238,7 @@
               this.$toast.show('Er is iets misgegaan', '', this.notificationSystem.options.error)
             }
           }, function(response) {
-            this.$toast.show(response.body.msg, '', this.notificationSystem.options.error)
+            this.$toast.show(response.body.message, '', this.notificationSystem.options.error)
           })
   
         }
@@ -262,7 +262,6 @@
               this.$toast.show('Chauffeur is verwijderd', '', this.notificationSystem.options.success)
               this.getAllUsers()
             } else {
-              console.log(response.body)
               this.$toast.show("Er is iets mis gegaan", 'Oops!', this.notificationSystem.options.error)
             }
           }
@@ -289,14 +288,14 @@
         this.$http.get('http://localhost:8080').then(function(response) {}).catch(function() {
           this.$toast.show("Response", 'Connectie verbroken!', this.notificationSystem.options.error)
         })
-      }, 
+      },
   
       getAllUsers: function() {
         this.drivers.splice(0, this.drivers.lensuccessgth)
         fetch('http://localhost:8080/admin/allusers')
           .then(data => data.json())
           .then(data => {
-            this.drivers = data
+            this.drivers = data.message
           })
           .catch(function() {
             $("#noConnectionModal").modal('show')
@@ -309,10 +308,8 @@
     },
   
     mounted: function() {
-      setInterval(this.checkUserConnection(), 1000)
-      setInterval(function() {
-        this.checkApiConnection()
-      }.bind(this), 5000)
+      this.checkUserConnection()
+      this.checkApiConnection()
     }
   }
 </script>

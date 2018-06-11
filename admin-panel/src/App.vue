@@ -33,12 +33,14 @@
 <script>
   import Skills from './components/Skills.vue'
   import Driver from './components/Driver.vue'
+  import Cargo from './components/Cargo.vue'
   
   export default {
     name: 'app',
     components: {
       Skills,
-      Driver
+      Driver,
+      Cargo
     }
   }
 </script>
