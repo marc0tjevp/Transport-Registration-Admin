@@ -42,6 +42,31 @@
         </div>
       </div>
     </div>
+
+     <!-- Add to driver Modal -->
+    <div class="modal fade" id="addModal" tabindex="-1" role="dialog">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Koppel aan chauffeur</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+  
+            <p><strong>MRN</strong></p>
+            <p>{{ detailModalProps.mrn }}</p>
+
+            <p><strong>Driver</strong></p>
+            <p>Driver dropdown should go here</p>  
+          </div>
+  
+          <div class="modal-footer">
+            <a class="btn btn-warning"><i class= "fa fa-edit"></i>Voeg toe</a>
+          </div>
+  
+        </div>
+      </div>
+    </div>
   
     <!-- No Connection Modal -->
     <div class="modal fade" id="noConnectionModal" tabindex="-1" role="dialog">
@@ -77,6 +102,7 @@
           MRN: ''
         },
         cargo: [],
+        drivers: [],
         notificationSystem: {
           options: {
             success: {
@@ -131,7 +157,19 @@
             .catch(function(){
                 $("#noConnectionModal").modal('show')
             })
+    },
+
+    getAllDrivers : function(){
+        this.drivers.splice(0, this.drivers.length)
+        fetch('http://localhost:8081/admin/allusers')
+           
+    },
+
+     giveToDriver: function(){
+        console.log("giveToDriver called")
+         $("#addModal").modal('show')
     }
+
     },
     
   
