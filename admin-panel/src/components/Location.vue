@@ -1,7 +1,7 @@
 <template>
   <div class="location">
   
-    <div class="row">
+    <div class="row h-100">
   
       <div class="col-4">
   
@@ -9,43 +9,43 @@
           <thead>
             <tr>
               <th>MRN</th>
-              <th>Referentie</th>
-              <th>Status</th>
+              <th>Chauffeur</th>
             </tr>
           </thead>
   
           <tbody>
             <tr v-for="(data, index) in forms" :key="index" @click="rowClicked(data)">
               <td>{{ data.mrn }}</td>
-              <td>{{ data.reference }}</td>
-              <td>{{ data.declarationStatus }}</td>
+              <td>{{ data.firstname }} {{ data.lastname }}</td>
             </tr>
           </tbody>
   
         </table>
   
-      </div>
-  
-      <div class="col-8">
-  
-        <gmap-map :center="center" ref="map" :zoom="1" style="width:100%;  height: 400px;">
-          <gmap-marker v-for="m in locations" :position.sync="m.position" :clickable="true" :draggable="true" @g-click="center=m.position"></gmap-marker>
-        </gmap-map>
-  
         <table class="table table-bordered table-hover">
           <thead>
             <tr>
+              <th>Time</th>
               <th>Long</th>
               <th>Lat</th>
             </tr>
           </thead>
           <tbody>
             <tr v-for="(data, index) in locations" :key="index">
+              <td>{{ data.position.time }}</td>
               <td>{{ data.position.lng }}</td>
               <td>{{ data.position.lat }}</td>
             </tr>
           </tbody>
         </table>
+  
+      </div>
+  
+      <div class="col-8">
+  
+        <gmap-map :center="center" ref="map" :zoom="1" style="width:100%;  height: 95%;">
+          <gmap-marker v-for="m in locations" :position.sync="m.position" :clickable="true" :draggable="false" @g-click="center=m.position"></gmap-marker>
+        </gmap-map>
   
       </div>
   
@@ -138,6 +138,7 @@
               // Create new object from array items
               var location = {
                 "position": {
+                  "time": obj.dateTime,
                   "lng": obj.long,
                   "lat": obj.lat,
                 }
@@ -149,8 +150,12 @@
             })
   
             this.locations = tempArray
-
-            this.$refs.map.resize()
+  
+            var bounds = new google.maps.LatLngBounds();
+            this.locations.forEach((marker) => {
+              bounds.extend(new google.maps.LatLng(marker.position.lat, marker.position.lng));
+            });
+            this.$refs.map.fitBounds(bounds);
   
             // this.locations = data.message
           })
@@ -172,7 +177,7 @@
       },
   
       getAllMRNS: function() {
-        fetch('http://localhost:8080/customs/form/all/test')
+        fetch('http://localhost:8080/company/forms')
           .then(data => data.json())
           .then(data => {
             this.forms = data.message
@@ -191,12 +196,23 @@
       this.checkUserConnection()
       this.checkApiConnection()
     },
-
+  
     ready: function() {}
   }
 </script>
 
 <style>
+  html {
+    height: 89%;
+  }
+  
+  body,
+  #app,
+  .container-fluid,
+  .location {
+    height: 100%;
+  }
+  
   .iziToast {
     margin-top: 60px;
     min-width: 400px;
