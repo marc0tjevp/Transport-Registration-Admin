@@ -5,8 +5,8 @@
       <a class="navbar-brand" href="#">Transporteur Portal</a>
   
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
+        <span class="navbar-toggler-icon"></span>
+      </button>
   
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
@@ -51,8 +51,6 @@
 </script>
 
 <style>
-  @import url('https://use.fontawesome.com/releases/v5.0.13/css/all.css');
-  @import url('https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css');
   nav {
     margin-bottom: 50px;
   }
