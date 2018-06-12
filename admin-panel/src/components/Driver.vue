@@ -223,7 +223,7 @@
           this.$toast.show('Wachtwoorden komen niet overeen', '', this.notificationSystem.options.error)
         } else {
   
-          this.$http.post('http://localhost:8080/auth/register', formData).then(function(response) {
+          this.$http.post('http://localhost:8081/auth/register', formData).then(function(response) {
             if (response.body) {
               if (response.status == 200) {
                 $('#registerModal').modal('hide')
@@ -252,7 +252,7 @@
           "userID": id
         }
   
-        this.$http.delete('http://localhost:8080/admin/deleteuser', {
+        this.$http.delete('http://localhost:8081/admin/deleteuser', {
           body: formData
         }).then(function(response) {
           console.log(formData)
@@ -285,14 +285,14 @@
       },
   
       checkApiConnection: function() {
-        this.$http.get('http://localhost:8080').then(function(response) {}).catch(function() {
+        this.$http.get('http://localhost:8081').then(function(response) {}).catch(function() {
           this.$toast.show("Response", 'Connectie verbroken!', this.notificationSystem.options.error)
         })
       },
   
       getAllUsers: function() {
         this.drivers.splice(0, this.drivers.lensuccessgth)
-        fetch('http://localhost:8080/admin/allusers')
+        fetch('http://localhost:8081/admin/allusers')
           .then(data => data.json())
           .then(data => {
             this.drivers = data.message
