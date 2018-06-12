@@ -1,8 +1,10 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+
 import Skills from './components/Skills.vue'
 import Driver from './components/Driver.vue'
 import Cargo from './components/Cargo.vue'
+import Location from './components/Location.vue'
 
 Vue.use(Router)
 
@@ -22,6 +24,11 @@ export default new Router({
       path: '/cargo',
       name: 'cargo',
       component: Cargo
+    },
+    {
+      path: '/location',
+      name: 'location',
+      component: Location
     }
   ]
 })

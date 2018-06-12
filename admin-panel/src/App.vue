@@ -19,11 +19,14 @@
           <li class="nav-item">
             <router-link class="nav-link" to="/cargo">Cargo</router-link>
           </li>
+          <li class="nav-item">
+            <router-link class="nav-link" to="/location">Location</router-link>
+          </li>
         </ul>
       </div>
     </nav>
   
-    <div class="container">
+    <div class="container-fluid">
       <router-view />
     </div>
   
@@ -34,13 +37,15 @@
   import Skills from './components/Skills.vue'
   import Driver from './components/Driver.vue'
   import Cargo from './components/Cargo.vue'
+  import Location from './components/Location.vue'
   
   export default {
     name: 'app',
     components: {
       Skills,
       Driver,
-      Cargo
+      Cargo,
+      Location
     }
   }
 </script>
