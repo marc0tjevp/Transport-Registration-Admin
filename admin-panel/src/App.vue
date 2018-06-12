@@ -19,6 +19,9 @@
           <li class="nav-item">
             <router-link class="nav-link" to="/cargo">Cargo</router-link>
           </li>
+          <li class="nav-item">
+            <router-link class="nav-link" to="/mrn">MRN List</router-link>
+          </li>
         </ul>
       </div>
     </nav>
@@ -34,13 +37,15 @@
   import Skills from './components/Skills.vue'
   import Driver from './components/Driver.vue'
   import Cargo from './components/Cargo.vue'
+  import Mrn from './components/Mrn.vue'
   
   export default {
     name: 'app',
     components: {
       Skills,
       Driver,
-      Cargo
+      Cargo,
+      Mrn
     }
   }
 </script>
