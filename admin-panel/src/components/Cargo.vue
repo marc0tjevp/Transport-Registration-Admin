@@ -3,12 +3,6 @@
   
     <div class="holder">
   
-      <div class="card">
-        <div class="card-body">
-          <a class="btn btn-primary" data-toggle="modal" data-target="#registerModal"><i class= "fas fa-user-plus"></i> Registreer</a>
-        </div>
-      </div>
-  
       <table class="table table-bordered table-hover">
         <thead>
           <tr>
@@ -42,7 +36,7 @@
           </div>
   
           <div class="modal-footer">
-            <a class="btn btn-warning"><i class= "fa fa-edit"></i> Bewerken</a>
+            <a class="btn btn-warning" @click="giveToDriver()"><i class= "fa fa-edit"></i>Koppel aan chauffeur</a>
           </div>
   
         </div>
@@ -77,9 +71,9 @@
         showNotification: false,
         notificationText: '',
         detailModalProps: {
-          MRN: ''
+          mrn: ''
         },
-        driver: {
+        MRN: {
           MRN: ''
         },
         cargo: [],
@@ -106,65 +100,6 @@
       }
     },
     methods: {
-      handleSubmit: function() {
-  
-/*        var formData = {
-          mrn: this.$refs.registration.firstname.value,
-          lastname: this.$refs.registration.lastname.value,
-          username: this.$refs.registration.username.value,
-          password: this.$refs.registration.password.value,
-          imei: this.$refs.registration.imei.value,
-          passwordcheck: this.$refs.registration.passwordcheck.value
-        }
-  
-        if (this.$refs.registration.passwordcheck.value != this.$refs.registration.password.value) {
-          this.$toast.show('Wachtwoorden komen niet overeen', '', this.notificationSystem.options.error)
-        } else {
-  
-          this.$http.post('http://localhost:8081/auth/register', formData).then(function(response) {
-            if (response.body) {
-              if (response.status == 200) {
-                $('#registerModal').modal('hide')
-                $('.modal').on('hidden.bs.modal', function() {
-                  $(this).find('form')[0].reset();
-                })
-                this.showNotification = false
-                this.$toast.show('Chauffeur is geregistereerd!', '', this.notificationSystem.options.success)
-                this.getAllUsers()
-              }
-            } else {
-              this.$toast.show('Er is iets misgegaan', '', this.notificationSystem.options.error)
-            }
-          }, function(response) {
-            this.$toast.show(response.body.message, '', this.notificationSystem.options.error)
-          })
-  
-        }
-      } ,*/
-  
-/*      deleteUser: function(id) {
-  
-        console.log(id)
-  
-        var formData = {
-          "userID": id
-        }
-  
-        this.$http.delete('http://localhost:8081/admin/deleteuser', {
-          body: formData
-        }).then(function(response) {
-          console.log(formData)
-          if (response.body) {
-            if (response.body.message == 'Succesfully deleted user') {
-              $('#detailModal').modal('hide')
-              this.$toast.show('Chauffeur is verwijderd', '', this.notificationSystem.options.success)
-              this.getAllUsers()
-            } else {
-              this.$toast.show("Er is iets mis gegaan", 'Oops!', this.notificationSystem.options.error)
-            }
-          }
-        })
-      } ,*/
   
       rowClicked: function(data) {
         this.detailModalProps.mrn = data.mrn
@@ -183,29 +118,33 @@
           this.$toast.show("Response", 'Connectie verbroken!', this.notificationSystem.options.error)
         })
       },
-  
-/*      getAllUsers: function() {
-        this.cargo.splice(0, this.cargo.lensuccessgth)
-        fetch('http://localhost:8081/admin/allusers')
-          .then(data => data.json())
-          .then(data => {
-            this.cargo = data.message
-          })
-          .catch(function() {
-            $("#noConnectionModal").modal('show')
-          })
-      }
-    },*/
+
+
+    getAllMrns: function(){
+         console.log('Started getAllMrns')
+        this.cargo.splice(0, this.cargo.length)
+        fetch('http://localhost:8081/customs/form/all/test')
+            .then(data => data.json())
+            .then(data =>{
+                this.cargo = data.message
+            })
+            .catch(function(){
+                $("#noConnectionModal").modal('show')
+            })
+    }
+    },
+    
   
     created: function() {
-      this.getAllUsers()
+      this.getAllMrns()
     },
   
     mounted: function() {
       this.checkUserConnection()
       this.checkApiConnection()
     }
-  }
+    
+}
 </script>
 
 <style>
