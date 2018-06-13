@@ -25,7 +25,7 @@
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title">{{ detailModalProps.firstname }} {{ detailModalProps.lastname }}</h5>
+            <!-- <h5 class="modal-title">{{ detailModalProps.firstname }} {{ detailModalProps.lastname }}</h5> -->
             <button type="button" class="close" data-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
@@ -36,7 +36,7 @@
           </div>
   
           <div class="modal-footer">
-            <a class="btn btn-warning" @click="giveToDriver()"><i class= "fa fa-edit"></i>Koppel aan chauffeur</a>
+            <a class="btn btn-warning" @click="openAddModal()"><i class= "fa fa-edit"></i>Koppel aan chauffeur</a>
           </div>
   
         </div>
@@ -52,23 +52,26 @@
             <button type="button" class="close" data-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
-  
+              
             <p><strong>MRN</strong></p>
             <p>{{ detailModalProps.mrn }}</p>
 
-            <!-- DROPDOWN -->
-<select v-model="selected">
-  <option v-for="(driverData, index) in drivers" :key="index">
-    {{ "Driver ID: "+driverData.driverID +" Username: "+ driverData.username }}
-  </option>
-</select>
-<span>Selected: {{ selected }}</span>
+            <!-- START DROPDOWN -->
+            <select v-model="selected">
+              <option v-for="(driverDataz, index) in drivers" :key="index">
+              <!-- {{ "driveriD: "+ driverDataz.driverID+  " Username "+  driverDataz.username }} -->
+              {{driverDataz.driverID}}
+              </option>
+            </select>
+            <br>
+            <span>Selected: {{ selected }}</span>
           <!-- END DROPDOWN -->
+              
 
           </div>
   
           <div class="modal-footer">
-            <a class="btn btn-warning"><i class= "fa fa-edit"></i>Voeg toe</a>
+            <a class="btn btn-warning" @click="giveToDriver(selected)"><i class= "fa fa-edit"></i>Voeg toe</a>
           </div>
   
         </div>
@@ -103,6 +106,9 @@
         selected: null,
         showNotification: false,
         notificationText: '',
+        addModalProps: {
+          driverid: ''
+        },
         detailModalProps: {
           mrn: ''
         },
@@ -181,10 +187,31 @@
            })
     },
 
-     giveToDriver: function(){
+    openAddModal: function(){
+      $("#addModal").modal('show')
+    },
+
+     giveToDriver: function(param){
+       this.addModalProps.driverid = param
         console.log("giveToDriver called")
-        console.log(this.drivers)
-         $("#addModal").modal('show')
+        //driverID + mrn
+        var formData = {
+          driverID: param,
+          mrn: this.detailModalProps.mrn
+        }
+        console.log(formData)
+        // this.$http.post('http://localhost:8081/company/driver/register', formData)
+        // .then(function(resp){
+        //   if(resp.body){
+        //     if(resp.status == 200){
+        //        $('#addModal').modal('hide')
+        //         this.showNotification = false
+        //         this.$toast.show('Chauffeur is gekoppeld!', '', this.notificationSystem.options.success)
+        //     }else {
+        //       this.$toast.show('Er is iets misgegaan', '', this.notificationSystem.options.error)
+        //     }
+        //   }
+        // })  
     }
 
     },
