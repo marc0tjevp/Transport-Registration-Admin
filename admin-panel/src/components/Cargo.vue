@@ -56,8 +56,16 @@
             <p><strong>MRN</strong></p>
             <p>{{ detailModalProps.mrn }}</p>
 
-            <p><strong>Driver</strong></p>
-            <p>Driver dropdown should go here</p>  
+            <div class="dropdown" id="dropdownDrivers">
+              <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Selecteer chauffeur
+              </button>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                <a class="dropdown-item" >Action</a>
+                <a class="dropdown-item" href="#">Another action</a>
+                <a class="dropdown-item" href="#">Something else here</a>
+            </div>
+        </div> 
           </div>
   
           <div class="modal-footer">
@@ -102,7 +110,6 @@
           MRN: ''
         },
         cargo: [],
-        drivers: [],
         notificationSystem: {
           options: {
             success: {
@@ -160,9 +167,19 @@
     },
 
     getAllDrivers : function(){
-        this.drivers.splice(0, this.drivers.length)
+      console.log('getAllDrivers called')
+      var drivers =  []
         fetch('http://localhost:8081/admin/allusers')
-           
+          .then(driverData => driverData.json())
+           .then(driverData =>{
+            console.log(driverData.message)
+            drivers = driverData.message
+            console.log(drivers)
+           })
+           .catch(function(){
+             $("#noConnectionModal").modal('show')
+           })
+           return drivers
     },
 
      giveToDriver: function(){
@@ -175,6 +192,7 @@
   
     created: function() {
       this.getAllMrns()
+      this.getAllDrivers()
     },
   
     mounted: function() {
