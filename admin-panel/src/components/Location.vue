@@ -22,7 +22,7 @@
   
         </table>
   
-        <table class="table table-bordered table-hover">
+        <table class="table pointerTable table-bordered table-striped">
           <thead>
             <tr>
               <th>Time</th>
@@ -44,7 +44,8 @@
       <div class="col-8">
   
         <gmap-map :center="center" ref="map" :zoom="1" style="width:100%;  height: 95%;">
-          <gmap-marker v-for="m in locations" :position.sync="m.position" :clickable="true" :draggable="false" @g-click="center=m.position"></gmap-marker>
+          <gmap-marker v-for="m in locations" :position.sync="m.position" :clickable="true" :draggable="false" @g-click="center=m.position">
+          </gmap-marker>
         </gmap-map>
   
       </div>
@@ -224,6 +225,10 @@
   
   table tbody tr {
     cursor: pointer;
+  }
+  
+  .pointerTable tbody tr {
+    cursor: default !important;
   }
   
   .table .btn {
