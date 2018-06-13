@@ -56,16 +56,15 @@
             <p><strong>MRN</strong></p>
             <p>{{ detailModalProps.mrn }}</p>
 
-            <div class="dropdown" id="dropdownDrivers">
-              <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                Selecteer chauffeur
-              </button>
-            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                <a class="dropdown-item" >Action</a>
-                <a class="dropdown-item" href="#">Another action</a>
-                <a class="dropdown-item" href="#">Something else here</a>
-            </div>
-        </div> 
+            <!-- DROPDOWN -->
+<select v-model="selected">
+  <option v-for="(driverData, index) in drivers" :key="index">
+    {{ "Driver ID: "+driverData.driverID +" Username: "+ driverData.username }}
+  </option>
+</select>
+<span>Selected: {{ selected }}</span>
+          <!-- END DROPDOWN -->
+
           </div>
   
           <div class="modal-footer">
@@ -101,6 +100,7 @@
     name: 'Cargo',
     data() {
       return {
+        selected: null,
         showNotification: false,
         notificationText: '',
         detailModalProps: {
@@ -110,6 +110,7 @@
           MRN: ''
         },
         cargo: [],
+        drivers: [],
         notificationSystem: {
           options: {
             success: {
@@ -168,22 +169,21 @@
 
     getAllDrivers : function(){
       console.log('getAllDrivers called')
-      var drivers =  []
+      this.drivers.splice(0,this.drivers.length)
         fetch('http://localhost:8081/admin/allusers')
           .then(driverData => driverData.json())
            .then(driverData =>{
-            console.log(driverData.message)
-            drivers = driverData.message
+            this.drivers = driverData.message
             console.log(drivers)
            })
            .catch(function(){
              $("#noConnectionModal").modal('show')
            })
-           return drivers
     },
 
      giveToDriver: function(){
         console.log("giveToDriver called")
+        console.log(this.drivers)
          $("#addModal").modal('show')
     }
 
