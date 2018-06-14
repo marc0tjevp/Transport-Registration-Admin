@@ -11,7 +11,7 @@
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
           <li class="nav-item">
-            <router-link class="nav-link" to="/">Home</router-link>
+            <router-link class="nav-link" to="/">Dashboard</router-link>
           </li>
           <li class="nav-item">
             <router-link class="nav-link" to="/driver">Chauffeurs</router-link>
@@ -20,7 +20,7 @@
             <router-link class="nav-link" to="/cargo">Cargo</router-link>
           </li>
           <li class="nav-item">
-            <router-link class="nav-link" to="/location">Location</router-link>
+            <router-link class="nav-link" to="/location">Routes</router-link>
           </li>
         </ul>
       </div>
@@ -34,7 +34,7 @@
 </template>
 
 <script>
-  import Skills from './components/Skills.vue'
+  import Dashboard from './components/Dashboard.vue'
   import Driver from './components/Driver.vue'
   import Cargo from './components/Cargo.vue'
   import Location from './components/Location.vue'
@@ -42,7 +42,7 @@
   export default {
     name: 'app',
     components: {
-      Skills,
+      Dashboard,
       Driver,
       Cargo,
       Location
