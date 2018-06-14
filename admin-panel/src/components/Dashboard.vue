@@ -7,8 +7,10 @@
 <script>
   export default {
     name: 'Dashboard',
-    data() {},
     methods: {},
+    data() {
+      return {}
+    },
     mounted: function() {},
     created: function() {}
   }
