@@ -42,8 +42,8 @@
         </div>
       </div>
     </div>
-
-     <!-- Add to driver Modal -->
+  
+    <!-- Add to driver Modal -->
     <div class="modal fade" id="addModal" tabindex="-1" role="dialog">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -52,22 +52,20 @@
             <button type="button" class="close" data-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
-              
+  
             <p><strong>MRN</strong></p>
             <p>{{ detailModalProps.mrn }}</p>
-
-            <!-- START DROPDOWN -->
-            <select v-model="selected">
-              <option v-for="(driverDataz, index) in drivers" :key="index">
-              <!-- {{ "driveriD: "+ driverDataz.driverID+  " Username "+  driverDataz.username }} -->
-              {{driverDataz.driverID}}
-              </option>
-            </select>
-            <br>
+  
+              <div class="form-group">
+                <select class="form-control" v-model="selected">
+                  <option v-for="(driverDataz, index) in drivers" :key="index" v-bind:value="driverDataz.driverID">
+                    {{driverDataz.firstname}}
+                    </option>
+                </select>
+              </div>
+  
             <span>Selected: {{ selected }}</span>
-          <!-- END DROPDOWN -->
-              
-
+  
           </div>
   
           <div class="modal-footer">
@@ -94,7 +92,7 @@
   
         </div>
       </div>
-    </div>  
+    </div>
   </div>
 </template>
 
@@ -154,45 +152,45 @@
       },
   
       checkApiConnection: function() {
-        this.$http.get('http://localhost:8081').then(function(response) {}).catch(function() {
+        this.$http.get('http://localhost:8080').then(function(response) {}).catch(function() {
           this.$toast.show("Response", 'Connectie verbroken!', this.notificationSystem.options.error)
         })
       },
-
-
-    getAllMrns: function(){
-         console.log('Started getAllMrns')
+  
+  
+      getAllMrns: function() {
+        console.log('Started getAllMrns')
         this.cargo.splice(0, this.cargo.length)
-        fetch('http://localhost:8081/customs/form/all/test')
-            .then(data => data.json())
-            .then(data =>{
-                this.cargo = data.message
-            })
-            .catch(function(){
-                $("#noConnectionModal").modal('show')
-            })
-    },
-
-    getAllDrivers : function(){
-      console.log('getAllDrivers called')
-      this.drivers.splice(0,this.drivers.length)
-        fetch('http://localhost:8081/admin/allusers')
+        fetch('http://localhost:8080/customs/form/all/test')
+          .then(data => data.json())
+          .then(data => {
+            this.cargo = data.message
+          })
+          .catch(function() {
+            $("#noConnectionModal").modal('show')
+          })
+      },
+  
+      getAllDrivers: function() {
+        console.log('getAllDrivers called')
+        this.drivers.splice(0, this.drivers.length)
+        fetch('http://localhost:8080/admin/allusers')
           .then(driverData => driverData.json())
-           .then(driverData =>{
+          .then(driverData => {
             this.drivers = driverData.message
             console.log(drivers)
-           })
-           .catch(function(){
-             $("#noConnectionModal").modal('show')
-           })
-    },
-
-    openAddModal: function(){
-      $("#addModal").modal('show')
-    },
-
-     giveToDriver: function(param){
-       this.addModalProps.driverid = param
+          })
+          .catch(function() {
+            // $("#noConnectionModal").modal('show')
+          })
+      },
+  
+      openAddModal: function() {
+        $("#addModal").modal('show')
+      },
+  
+      giveToDriver: function(param) {
+        this.addModalProps.driverid = param
         console.log("giveToDriver called")
         //driverID + mrn
         var formData = {
@@ -212,10 +210,10 @@
         //     }
         //   }
         // })  
-    }
-
+      }
+  
     },
-    
+  
   
     created: function() {
       this.getAllMrns()
@@ -226,8 +224,8 @@
       this.checkUserConnection()
       this.checkApiConnection()
     }
-    
-}
+  
+  }
 </script>
 
 <style>
