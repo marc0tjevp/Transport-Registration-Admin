@@ -64,7 +64,7 @@
                 </select>
               </div>
   
-            <span>Selected: {{ selected }}</span>
+            <span>DriverID: {{ selected }}</span>
   
           </div>
   
@@ -152,7 +152,7 @@
       },
   
       checkApiConnection: function() {
-        this.$http.get('http://localhost:8080').then(function(response) {}).catch(function() {
+        this.$http.get('http://localhost:8081').then(function(response) {}).catch(function() {
           this.$toast.show("Response", 'Connectie verbroken!', this.notificationSystem.options.error)
         })
       },
@@ -161,7 +161,7 @@
       getAllMrns: function() {
         console.log('Started getAllMrns')
         this.cargo.splice(0, this.cargo.length)
-        fetch('http://localhost:8080/customs/form/all/test')
+        fetch('http://localhost:8081/customs/form/all/test')
           .then(data => data.json())
           .then(data => {
             this.cargo = data.message
@@ -174,7 +174,7 @@
       getAllDrivers: function() {
         console.log('getAllDrivers called')
         this.drivers.splice(0, this.drivers.length)
-        fetch('http://localhost:8080/admin/allusers')
+        fetch('http://localhost:8081/admin/allusers')
           .then(driverData => driverData.json())
           .then(driverData => {
             this.drivers = driverData.message
@@ -198,18 +198,18 @@
           mrn: this.detailModalProps.mrn
         }
         console.log(formData)
-        // this.$http.post('http://localhost:8081/company/driver/register', formData)
-        // .then(function(resp){
-        //   if(resp.body){
-        //     if(resp.status == 200){
-        //        $('#addModal').modal('hide')
-        //         this.showNotification = false
-        //         this.$toast.show('Chauffeur is gekoppeld!', '', this.notificationSystem.options.success)
-        //     }else {
-        //       this.$toast.show('Er is iets misgegaan', '', this.notificationSystem.options.error)
-        //     }
-        //   }
-        // })  
+        this.$http.post('http://localhost:8081/company/driver/register', formData)
+        .then(function(resp){
+          if(resp.body){
+            if(resp.status == 200){
+               $('#addModal').modal('hide')
+                this.showNotification = false
+                this.$toast.show('Chauffeur is gekoppeld!', '', this.notificationSystem.options.success)
+            }else {
+              this.$toast.show('Er is iets misgegaan', '', this.notificationSystem.options.error)
+            }
+          }
+        })  
       }
   
     },
