@@ -22,6 +22,9 @@
           <li class="nav-item">
             <router-link class="nav-link" to="/location">Routes</router-link>
           </li>
+          <li class="nav-item">
+            <router-link class="nav-link" to="/Drivetimes">Drivetimes</router-link>
+          </li>
         </ul>
       </div>
     </nav>
@@ -38,6 +41,7 @@
   import Driver from './components/Driver.vue'
   import Cargo from './components/Cargo.vue'
   import Location from './components/Location.vue'
+  import Drivetimes from './components/Drivetimes.vue'
   
   export default {
     name: 'app',
@@ -45,7 +49,8 @@
       Dashboard,
       Driver,
       Cargo,
-      Location
+      Location,
+      Drivetimes
     }
   }
 </script>
@@ -55,3 +60,6 @@
     margin-bottom: 50px;
   }
 </style>
+
+
+
