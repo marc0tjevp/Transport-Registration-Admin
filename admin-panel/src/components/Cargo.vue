@@ -159,7 +159,6 @@
   
   
       getAllMrns: function() {
-        console.log('Started getAllMrns')
         this.cargo.splice(0, this.cargo.length)
         fetch('http://localhost:8081/customs/form/all/test')
           .then(data => data.json())
@@ -172,7 +171,6 @@
       },
   
       getAllDrivers: function() {
-        console.log('getAllDrivers called')
         this.drivers.splice(0, this.drivers.length)
         fetch('http://localhost:8081/admin/allusers')
           .then(driverData => driverData.json())
@@ -191,7 +189,6 @@
   
       giveToDriver: function(param) {
         this.addModalProps.driverid = param
-        console.log("giveToDriver called")
         //driverID + mrn
         var formData = {
           driverID: param,
