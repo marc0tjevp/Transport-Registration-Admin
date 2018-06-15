@@ -176,7 +176,6 @@
           .then(driverData => driverData.json())
           .then(driverData => {
             this.drivers = driverData.message
-            console.log(drivers)
           })
           .catch(function() {
             // $("#noConnectionModal").modal('show')
@@ -194,7 +193,6 @@
           driverID: param,
           mrn: this.detailModalProps.mrn
         }
-        console.log(formData)
         this.$http.post('http://localhost:8081/company/driver/register', formData)
         .then(function(resp){
           if(resp.body){
