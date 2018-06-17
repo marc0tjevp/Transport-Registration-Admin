@@ -9,13 +9,12 @@
             <th>MRN</th>
           </tr>
         </thead>
-  
-        <tbody>
-          <tr v-for="(data, index) in cargo" :key="index" @click="rowClicked(data)">
+        <tbody> 
+          <tr v-for="(data, index) in cargo" :key="index" @click="rowClicked(data)+ checkIfSigned(data)" >
             <td>{{ data.mrn }}</td>
           </tr>
         </tbody>
-  
+ 
       </table>
   
     </div>
@@ -31,8 +30,8 @@
           <div class="modal-body">
   
             <p><strong>MRN</strong></p>
-            <p>{{ detailModalProps.mrn }}</p>
-  
+            <p>{{ detailModalProps.mrn}}</p>
+            <p>{{takenID.driverid}}</p>
           </div>
   
           <div class="modal-footer">
@@ -113,8 +112,12 @@
         MRN: {
           MRN: ''
         },
+        takenID:{
+          driverid: ''
+        },
         cargo: [],
         drivers: [],
+        signedMrns: [],
         notificationSystem: {
           options: {
             success: {
@@ -141,7 +144,6 @@
   
       rowClicked: function(data) {
         this.detailModalProps.mrn = data.mrn
-  
         $("#detailModal").modal('show')
       },
   
@@ -152,7 +154,7 @@
       },
   
       checkApiConnection: function() {
-        this.$http.get('http://localhost:8081').then(function(response) {}).catch(function() {
+        this.$http.get('http://localhost:8080').then(function(response) {}).catch(function() {
           this.$toast.show("Response", 'Connectie verbroken!', this.notificationSystem.options.error)
         })
       },
@@ -160,7 +162,7 @@
   
       getAllMrns: function() {
         this.cargo.splice(0, this.cargo.length)
-        fetch('http://localhost:8081/customs/form/all/test')
+        fetch('http://localhost:8080/customs/form/all/test')
           .then(data => data.json())
           .then(data => {
             this.cargo = data.message
@@ -169,10 +171,31 @@
             $("#noConnectionModal").modal('show')
           })
       },
+
+      getRegisteredMrns: function(){
+        this.signedMrns.splice(0, this.signedMrns.length)
+        fetch('http://localhost:8080/company/forms')
+        .then(mrnData => mrnData.json())
+        .then(mrnData => {
+          this.signedMrns = mrnData.message
+        })
+      },
+
+      checkIfSigned: function(param){
+        for(var i =0; i<this.signedMrns.length; i++){
+          var tempArray = this.signedMrns[i]
+            if(param.mrn == tempArray.mrn){
+              this.takenID.driverid = ' Assigned to driver with ID : '+ tempArray.driverID
+              break
+          } else {
+            this.takenID.driverid = ' This MRN is not assigned'
+          }
+        } 
+      },
   
       getAllDrivers: function() {
         this.drivers.splice(0, this.drivers.length)
-        fetch('http://localhost:8081/admin/allusers')
+        fetch('http://localhost:8080/admin/allusers')
           .then(driverData => driverData.json())
           .then(driverData => {
             this.drivers = driverData.message
@@ -193,7 +216,7 @@
           driverID: param,
           mrn: this.detailModalProps.mrn
         }
-        this.$http.post('http://localhost:8081/company/driver/register', formData)
+        this.$http.post('http://localhost:8080/company/driver/register', formData)
         .then(function(resp){
           if(resp.body){
             if(resp.status == 200){
@@ -213,6 +236,7 @@
     created: function() {
       this.getAllMrns()
       this.getAllDrivers()
+      this.getRegisteredMrns()
     },
   
     mounted: function() {
