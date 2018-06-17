@@ -223,6 +223,7 @@
                $('#addModal').modal('hide')
                 this.showNotification = false
                 this.$toast.show('Chauffeur is gekoppeld!', '', this.notificationSystem.options.success)
+                this.getRegisteredMrns()
             }else {
               this.$toast.show('Er is iets misgegaan', '', this.notificationSystem.options.error)
             }
