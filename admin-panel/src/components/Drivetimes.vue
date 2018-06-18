@@ -12,7 +12,7 @@
         </thead>
   
         <tbody>
-          <tr v-for="(data, index) in drivetimes" :key="index" @click="rowClicked(data)">
+          <tr v-for="(data, index) in drivetimes" :key="index" @click="rowClicked(data) + getMrnByID(data.driverID)">
             <td>{{ data.firstname }}</td>
             <td>{{ data.lastname }}</td>
             <td>{{ data.username }}</td>
@@ -32,32 +32,30 @@
             <button type="button" class="close" data-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
-  
-            <p><strong>mrn</strong></p>
-            <p>{{ detailModalProps.mrn }}</p>
 
-            <p><strong>Voornaam</strong></p>
-            <p>{{ detailModalProps.firstname }}</p>
-  
-            <p><strong>Achternaam</strong></p>
-            <p>{{ detailModalProps.lastname }}</p>
-  
-            <p><strong>Gebruikersnaam</strong></p>
-            <p>{{ detailModalProps.username }}</p>
-  
-            <p><strong>locatie</strong></p>
-            <p>{{ detailModalProps.location }}</p>
+            
+<div class="form-group">
+              <select class="form-control" v-model="selected">
+                  <option v-for="(driverDataz, index) in drivetimes" :key="index" v-bind:value="driverDataz.driverID">
+                    {{driverDataz.firstname}} {{ driverDataz.lastname }}
+                  </option>
+                </select>
+            </div>
 
             <p><strong>rit tijden</strong></p>
             <p>{{ detailModalProps.drivetimes }}</p>
 
-            <p><strong>Android ID</strong></p>
-            <p>{{ detailModalProps.imei }}</p>
+            
+
   
           </div>
         </div>
       </div>
     </div>
+
+
+
+
   
     <!-- No Connection Modal -->
     <div class="modal fade" id="noConnectionModal" tabindex="-1" role="dialog">
@@ -92,7 +90,6 @@
           lastname: '',
           username: '',
           password: '',
-          location: '',
           drivetimes: '',
           imei: ''
         },
@@ -155,6 +152,22 @@
           })
       }
     },
+
+
+
+    getMrnByID: function(paramOne) {
+        this.drivetimes.splice(0, this.drivetimes.length)
+        fetch('http://localhost:8080/company/getbyid/' + paramOne)
+          .then(mrnData => mrnData.json())
+          .then(mrnData => {
+            this.drivetimes = mrnData.message
+          console.log(mrnData)
+          })
+      },
+
+
+
+
 
       getAllMrns: function() {
         console.log('Started getAllMrns')
