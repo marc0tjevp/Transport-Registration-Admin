@@ -34,7 +34,7 @@
           <div class="modal-body">
 
             
-<div class="form-group">
+            <div class="form-group">
               <select class="form-control" v-model="selected">
                   <option v-for="(driverDataz, index) in drivetimes" :key="index" v-bind:value="driverDataz.driverID">
                     {{driverDataz.firstname}} {{ driverDataz.lastname }}
@@ -82,6 +82,7 @@
     name: 'Drivetimes',
     data() {
       return {
+        selected: null,
         showNotification: false,
         notificationText: '',
         detailModalProps: {
@@ -95,6 +96,7 @@
         },
 
         drivetimes: [],
+        mrnID:[],
         notificationSystem: {
           options: {
             success: {
@@ -156,11 +158,12 @@
 
 
     getMrnByID: function(paramOne) {
-        this.drivetimes.splice(0, this.drivetimes.length)
+      console.log('getMrnByID started')
+        this.mrnID.splice(0, this.mrnID.length)
         fetch('http://localhost:8080/company/getbyid/' + paramOne)
           .then(mrnData => mrnData.json())
           .then(mrnData => {
-            this.drivetimes = mrnData.message
+            this.mrnID = mrnData.message
           console.log(mrnData)
           })
       },
