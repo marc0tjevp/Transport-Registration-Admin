@@ -203,7 +203,7 @@
             this.drivers = driverData.message
           })
           .catch(function() {
-            // $("#noConnectionModal").modal('show')
+            $("#noConnectionModal").modal('show')
           })
       },
   
@@ -232,9 +232,7 @@
             }
           })
       }
-  
     },
-  
   
     created: function() {
       this.getAllMrns()
