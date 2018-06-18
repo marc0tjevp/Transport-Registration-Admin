@@ -384,7 +384,7 @@
         }).then(function(response) {
           console.log(formData)
           if (response.body) {
-            if (response.body.message == 'Succesfully deleted user') {
+            if (response.status == 200) {
               $('#detailModal').modal('hide')
               this.$toast.show('Chauffeur is verwijderd', '', this.notificationSystem.options.success)
               this.getAllUsers()

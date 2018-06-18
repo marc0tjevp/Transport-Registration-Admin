@@ -1,5 +1,5 @@
 <template>
-  <div class="driver">
+  <div class="cargo">
   
     <div class="holder">
   
@@ -35,14 +35,18 @@
           <div class="modal-body">
   
             <p><strong>MRN</strong></p>
-            <p>{{ detailModalProps.mrn}}</p>
+            <p>{{ detailModalProps.mrn }}</p>
   
             <p v-if="takenID.driverid"><strong>Toegewezen aan</strong></p>
-            <p v-if="takenID.driverid">{{takenID.driverid}}</p>
+            <p v-if="takenID.driverid">{{ takenID.driverid }}</p>
           </div>
   
           <div v-if="!takenID.driverid" class="modal-footer">
             <a class="btn btn-warning" @click="openAddModal()"><i class= "fa fa-edit"></i>Koppel aan chauffeur</a>
+          </div>
+  
+          <div v-if="takenID.driverid" class="modal-footer">
+            <a class="btn btn-danger" @click="openRemoveModal(takenID.driverid, detailModalProps.mrn)"><i class= "fa fa-edit"></i>Ontkoppel chauffeur</a>
           </div>
   
         </div>
@@ -64,10 +68,10 @@
   
             <div class="form-group">
               <select class="form-control" v-model="selected">
-                  <option v-for="(driverDataz, index) in drivers" :key="index" v-bind:value="driverDataz.driverID">
-                    {{driverDataz.firstname}} {{ driverDataz.lastname }}
-                  </option>
-                </select>
+                                  <option v-for="(driverDataz, index) in drivers" :key="index" v-bind:value="driverDataz.driverID">
+                                    {{driverDataz.firstname}} {{ driverDataz.lastname }}
+                                  </option>
+                                </select>
             </div>
   
           </div>
@@ -75,6 +79,31 @@
           <div class="modal-footer">
             <a class="btn btn-warning" @click="giveToDriver(selected)"><i class= "fa fa-edit"></i>Voeg toe</a>
           </div>
+  
+        </div>
+      </div>
+    </div>
+  
+    <!-- Remove from driver Modal -->
+    <div class="modal fade" id="removeModal" tabindex="-1" role="dialog">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Ontkoppel vracht?</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"></button>
+          </div>
+  
+          <form @submit.prevent="handleSubmitRemove" ref="remove">
+            <div class="modal-body">
+              <input id="userID" v-model="removeModalProps.driverID" name="driverID" required="required" class="form-control here" type="text">
+              <input id="userID" v-model="removeModalProps.mrn" name="mrn" required="required" class="form-control here" type="text">
+            </div>
+  
+            <div class="modal-footer">
+              <button name="submit" type="submit" class="btn btn-primary">Ontkopel</button>
+              <a class="btn btn-secondary" data-dismiss="modal">Annuleren</a>
+            </div>
+          </form>
   
         </div>
       </div>
@@ -110,6 +139,10 @@
         },
         detailModalProps: {
           mrn: ''
+        },
+        removeModalProps: {
+          mrn: '',
+          driverid: ''
         },
         MRN: {
           MRN: ''
@@ -161,7 +194,6 @@
         })
       },
   
-  
       getAllMrns: function() {
         this.cargo.splice(0, this.cargo.length)
         fetch('http://localhost:8080/customs/form/all/test')
@@ -209,6 +241,40 @@
   
       openAddModal: function() {
         $("#addModal").modal('show')
+      },
+  
+      openAddModal: function() {
+        $("#addModal").modal('show')
+      },
+  
+      handleSubmitRemove: function() {
+        var formData = {
+          driverID: this.$refs.remove.driverID.value,
+          mrn: this.$refs.remove.mrn.value,
+        }
+  
+        this.$http.delete('http://localhost:8080/company/driver/deregister', {
+          body: formData
+        }).then(function(response) {
+          if (response.body) {
+            if (response.status == 200) {
+              $('#removeModal').modal('hide')
+              this.$toast.show('Chauffeur is ontkoppeld', '', this.notificationSystem.options.success)
+            } else {
+              this.$toast.show("Er is iets mis gegaan", 'Oops!', this.notificationSystem.options.error)
+            }
+          }
+        }).catch(function() {
+          this.$toast.show(response.message, '', this.notificationSystem.options.error)
+        })
+      },
+  
+      openRemoveModal: function(id, mrn) {
+  
+        this.removeModalProps.driverID = id
+        this.removeModalProps.mrn = mrn
+  
+        $("#removeModal").modal('show')
       },
   
       giveToDriver: function(param) {
