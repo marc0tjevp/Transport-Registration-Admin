@@ -56,8 +56,7 @@
   
           <div class="modal-footer">
             <a class="btn btn-danger" @click="deleteUser(detailModalProps.userID)"><i class= "fa fa-trash"></i> Verwijderen</a>
-            <!-- <a class="btn btn-warning"><i class= "fa fa-edit"></i> Bewerken</a>
-               <a class="btn btn-primary"><i class= "fa fa-map-marker-alt"></i> Locatie</a> -->
+            <a class="btn btn-warning" @click="deleteUser(detailModalProps)"><i class= "fa fa-edit"></i> Bewerken</a>
           </div>
   
         </div>

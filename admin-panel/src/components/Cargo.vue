@@ -7,14 +7,19 @@
         <thead>
           <tr>
             <th>MRN</th>
+            <th>Referentie</th>
+            <th>Verzender</th>
+            <th>Ontvanger</th>
           </tr>
         </thead>
         <tbody>
           <tr v-for="(data, index) in cargo" :key="index" @click="rowClicked(data)+ checkIfSigned(data)">
             <td>{{ data.mrn }}</td>
+            <td>{{ data.reference }}</td>
+            <td>{{ data.sender }}</td>
+            <td>{{ data.client }}</td>
           </tr>
         </tbody>
-  
       </table>
   
     </div>
@@ -31,8 +36,9 @@
   
             <p><strong>MRN</strong></p>
             <p>{{ detailModalProps.mrn}}</p>
-            <p><strong>Toegewezen aan</strong></p>
-            <p>{{takenID.driverid}}</p>
+  
+            <p v-if="takenID.driverid"><strong>Toegewezen aan</strong></p>
+            <p v-if="takenID.driverid">{{takenID.driverid}}</p>
           </div>
   
           <div v-if="!takenID.driverid" class="modal-footer">
@@ -58,13 +64,11 @@
   
             <div class="form-group">
               <select class="form-control" v-model="selected">
-                      <option v-for="(driverDataz, index) in drivers" :key="index" v-bind:value="driverDataz.driverID">
-                        {{driverDataz.firstname}}
-                        </option>
-                    </select>
+                  <option v-for="(driverDataz, index) in drivers" :key="index" v-bind:value="driverDataz.driverID">
+                    {{driverDataz.firstname}} {{ driverDataz.lastname }}
+                  </option>
+                </select>
             </div>
-  
-            <span>DriverID: {{ selected }}</span>
   
           </div>
   
@@ -85,11 +89,8 @@
             <button type="button" class="close" data-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
-  
             <p>Er kan geen verbinding worden gemaakt met de API.</p>
-  
           </div>
-  
         </div>
       </div>
     </div>
@@ -189,7 +190,7 @@
             this.takenID.driverid = tempArray.driverID
             break
           } else {
-            this.takenID.driverid = ' This MRN is not assigned'
+            this.takenID.driverid = ''
           }
         }
       },
