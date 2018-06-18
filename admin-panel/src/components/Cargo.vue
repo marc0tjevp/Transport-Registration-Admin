@@ -9,12 +9,12 @@
             <th>MRN</th>
           </tr>
         </thead>
-        <tbody> 
-          <tr v-for="(data, index) in cargo" :key="index" @click="rowClicked(data)+ checkIfSigned(data)" >
+        <tbody>
+          <tr v-for="(data, index) in cargo" :key="index" @click="rowClicked(data)+ checkIfSigned(data)">
             <td>{{ data.mrn }}</td>
           </tr>
         </tbody>
- 
+  
       </table>
   
     </div>
@@ -24,17 +24,18 @@
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header">
-            <!-- <h5 class="modal-title">{{ detailModalProps.firstname }} {{ detailModalProps.lastname }}</h5> -->
+            <h5 class="modal-title">Vracht: {{ detailModalProps.mrn }}</h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
   
             <p><strong>MRN</strong></p>
             <p>{{ detailModalProps.mrn}}</p>
+            <p><strong>Toegewezen aan</strong></p>
             <p>{{takenID.driverid}}</p>
           </div>
   
-          <div class="modal-footer">
+          <div v-if="!takenID.driverid" class="modal-footer">
             <a class="btn btn-warning" @click="openAddModal()"><i class= "fa fa-edit"></i>Koppel aan chauffeur</a>
           </div>
   
@@ -55,13 +56,13 @@
             <p><strong>MRN</strong></p>
             <p>{{ detailModalProps.mrn }}</p>
   
-              <div class="form-group">
-                <select class="form-control" v-model="selected">
-                  <option v-for="(driverDataz, index) in drivers" :key="index" v-bind:value="driverDataz.driverID">
-                    {{driverDataz.firstname}}
-                    </option>
-                </select>
-              </div>
+            <div class="form-group">
+              <select class="form-control" v-model="selected">
+                      <option v-for="(driverDataz, index) in drivers" :key="index" v-bind:value="driverDataz.driverID">
+                        {{driverDataz.firstname}}
+                        </option>
+                    </select>
+            </div>
   
             <span>DriverID: {{ selected }}</span>
   
@@ -112,7 +113,7 @@
         MRN: {
           MRN: ''
         },
-        takenID:{
+        takenID: {
           driverid: ''
         },
         cargo: [],
@@ -171,26 +172,26 @@
             $("#noConnectionModal").modal('show')
           })
       },
-
-      getRegisteredMrns: function(){
+  
+      getRegisteredMrns: function() {
         this.signedMrns.splice(0, this.signedMrns.length)
         fetch('http://localhost:8080/company/forms')
-        .then(mrnData => mrnData.json())
-        .then(mrnData => {
-          this.signedMrns = mrnData.message
-        })
+          .then(mrnData => mrnData.json())
+          .then(mrnData => {
+            this.signedMrns = mrnData.message
+          })
       },
-
-      checkIfSigned: function(param){
-        for(var i =0; i<this.signedMrns.length; i++){
+  
+      checkIfSigned: function(param) {
+        for (var i = 0; i < this.signedMrns.length; i++) {
           var tempArray = this.signedMrns[i]
-            if(param.mrn == tempArray.mrn){
-              this.takenID.driverid = ' Assigned to driver with ID : '+ tempArray.driverID
-              break
+          if (param.mrn == tempArray.mrn) {
+            this.takenID.driverid = tempArray.driverID
+            break
           } else {
             this.takenID.driverid = ' This MRN is not assigned'
           }
-        } 
+        }
       },
   
       getAllDrivers: function() {
@@ -217,18 +218,18 @@
           mrn: this.detailModalProps.mrn
         }
         this.$http.post('http://localhost:8080/company/driver/register', formData)
-        .then(function(resp){
-          if(resp.body){
-            if(resp.status == 200){
-               $('#addModal').modal('hide')
+          .then(function(resp) {
+            if (resp.body) {
+              if (resp.status == 200) {
+                $('#addModal').modal('hide')
                 this.showNotification = false
                 this.$toast.show('Chauffeur is gekoppeld!', '', this.notificationSystem.options.success)
                 this.getRegisteredMrns()
-            }else {
-              this.$toast.show('Er is iets misgegaan', '', this.notificationSystem.options.error)
+              } else {
+                this.$toast.show('Er is iets misgegaan', '', this.notificationSystem.options.error)
+              }
             }
-          }
-        })  
+          })
       }
   
     },
