@@ -35,18 +35,24 @@
 
             
             <div class="form-group">
-              <select class="form-control" v-model="selected">
-                  <option v-for="(driverDataz, index) in drivetimes" :key="index" v-bind:value="driverDataz.driverID">
-                    {{driverDataz.firstname}} {{ driverDataz.lastname }}
+              <select class="form-control" v-model="selected" @change="getDrivetimeByMrn(selected)">
+                  <option v-for="(driverData, index) in mrnID" :key="index" >
+                    {{driverData.mrn}}
                   </option>
                 </select>
             </div>
 
             <p><strong>rit tijden</strong></p>
-            <p>{{ detailModalProps.drivetimes }}</p>
-
-            
-
+          <tbody>
+            <th>Startijd</th>
+            <th>Eindtijd</th>
+            <th>Type</th>
+          <tr v-for="(datat, index) in drivesByMrn" :key="index">
+            <td>{{ datat.startTime }} </td>
+            <td>{{ datat.endTime }} </td>
+            <td>{{ datat.type }} </td>
+          </tr>
+        </tbody>
   
           </div>
         </div>
@@ -97,6 +103,7 @@
 
         drivetimes: [],
         mrnID:[],
+        drivesByMrn: [],
         notificationSystem: {
           options: {
             success: {
@@ -126,7 +133,7 @@
         this.detailModalProps.lastname = data.lastname
         this.detailModalProps.username = data.username
         this.detailModalProps.imei = data.imei
-  
+
         $("#detailModal").modal('show')
       },
   
@@ -152,37 +159,29 @@
           .catch(function() {
             $("#noConnectionModal").modal('show')
           })
-      }
     },
 
 
 
     getMrnByID: function(paramOne) {
-      console.log('getMrnByID started')
         this.mrnID.splice(0, this.mrnID.length)
         fetch('http://localhost:8080/company/getbyid/' + paramOne)
           .then(mrnData => mrnData.json())
           .then(mrnData => {
             this.mrnID = mrnData.message
-          console.log(mrnData)
           })
-      },
+      
+    },
 
+    getDrivetimeByMrn: function(paramtwo) {
+      this.drivesByMrn.splice(0, this.drivesByMrn.length)
+        fetch('http://localhost:8080/drivetimes/getdrivebymrn/' + paramtwo)
+          .then(mrnData => mrnData.json())
+          .then(mrnData => {
+            this.drivesByMrn = mrnData.message
 
-
-
-
-      getAllMrns: function() {
-        console.log('Started getAllMrns')
-        this.mrn.splice(0, this.mrn.length)
-        fetch('http://localhost:8080/customs/form/all/test')
-          .then(data => data.json())
-          .then(data => {
-            this.mrn = data.message
           })
-          .catch(function() {
-            $("#noConnectionModal").modal('show')
-          })
+        }
       },
 
   
