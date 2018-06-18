@@ -38,7 +38,7 @@
             <p>{{ detailModalProps.mrn }}</p>
   
             <p v-if="takenID.driverid"><strong>Toegewezen aan</strong></p>
-            <p v-if="takenID.driverid">{{ takenID.driverid }}</p>
+            <p v-if="takenID.driverid">{{ takenID.driverName }}</p>
           </div>
   
           <div v-if="!takenID.driverid" class="modal-footer">
@@ -66,12 +66,13 @@
             <p><strong>MRN</strong></p>
             <p>{{ detailModalProps.mrn }}</p>
   
+              <p><strong>Chauffeur</strong></p>
             <div class="form-group">
               <select class="form-control" v-model="selected">
-                                  <option v-for="(driverDataz, index) in drivers" :key="index" v-bind:value="driverDataz.driverID">
-                                    {{driverDataz.firstname}} {{ driverDataz.lastname }}
-                                  </option>
-                                </select>
+                          <option v-for="(driverDataz, index) in drivers" :key="index" v-bind:value="driverDataz.driverID">
+                            {{driverDataz.firstname}} {{ driverDataz.lastname }}
+                          </option>
+                        </select>
             </div>
   
           </div>
@@ -95,8 +96,9 @@
   
           <form @submit.prevent="handleSubmitRemove" ref="remove">
             <div class="modal-body">
-              <input id="userID" v-model="removeModalProps.driverID" name="driverID" required="required" class="form-control here" type="text">
-              <input id="userID" v-model="removeModalProps.mrn" name="mrn" required="required" class="form-control here" type="text">
+              <p>Weet u zeker dat u deze vracht wil ontkoppelen van deze chauffeur?</p>
+              <input id="userID" v-model="removeModalProps.driverID" name="driverID" required="required" class="form-control d-none" type="text">
+              <input id="userID" v-model="removeModalProps.mrn" name="mrn" required="required" class="form-control d-none" type="text">
             </div>
   
             <div class="modal-footer">
@@ -148,7 +150,8 @@
           MRN: ''
         },
         takenID: {
-          driverid: ''
+          driverid: '',
+          driverName: ''
         },
         cargo: [],
         drivers: [],
@@ -217,12 +220,21 @@
   
       checkIfSigned: function(param) {
         for (var i = 0; i < this.signedMrns.length; i++) {
+  
           var tempArray = this.signedMrns[i]
+  
           if (param.mrn == tempArray.mrn) {
             this.takenID.driverid = tempArray.driverID
+            fetch('http://localhost:8080/admin/driver/' + tempArray.driverID)
+              .then(driverObj => driverObj.json())
+              .then(driverObj => {
+                console.log(driverObj)
+                this.takenID.driverName = driverObj.message.firstname + ' ' + driverObj.message.lastname
+              })
             break
           } else {
             this.takenID.driverid = ''
+            this.takenID.driverName = ''
           }
         }
       },
@@ -233,17 +245,13 @@
           .then(driverData => driverData.json())
           .then(driverData => {
             this.drivers = driverData.message
-          })
-          .catch(function() {
-            $("#noConnectionModal").modal('show')
+          }).catch(function() {
+            this.$toast.show("Kon de chauffeurs niet ophalen", '', this.notificationSystem.options.error)
           })
       },
   
       openAddModal: function() {
-        $("#addModal").modal('show')
-      },
-  
-      openAddModal: function() {
+        $("#detailModal").modal('hide')
         $("#addModal").modal('show')
       },
   
@@ -260,16 +268,23 @@
             if (response.status == 200) {
               $('#removeModal').modal('hide')
               this.$toast.show('Chauffeur is ontkoppeld', '', this.notificationSystem.options.success)
+              this.takenID.driverid = ''
+              this.takenID.driverName = ''
+              this.getAllMrns()
+              this.getAllDrivers()
+              this.getRegisteredMrns()
             } else {
               this.$toast.show("Er is iets mis gegaan", 'Oops!', this.notificationSystem.options.error)
             }
           }
         }).catch(function() {
-          this.$toast.show(response.message, '', this.notificationSystem.options.error)
+          this.$toast.show(response.body.message, '', this.notificationSystem.options.error)
         })
       },
   
       openRemoveModal: function(id, mrn) {
+  
+        $("#detailModal").modal('hide')
   
         this.removeModalProps.driverID = id
         this.removeModalProps.mrn = mrn

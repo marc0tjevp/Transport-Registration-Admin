@@ -425,7 +425,7 @@
             this.drivers = data.message
           })
           .catch(function() {
-            $("#noConnectionModal").modal('show')
+            this.$toast.show(response.body.message, '', this.notificationSystem.options.error)
           })
       }
     },
