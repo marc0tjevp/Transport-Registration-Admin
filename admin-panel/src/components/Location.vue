@@ -5,7 +5,7 @@
   
       <div class="col-4">
   
-        <table class="table mrnTable table-bordered table-hover">
+        <table id="mrnTable" class="table mrnTable table-bordered table-hover">
           <thead>
             <tr>
               <th>MRN</th>
@@ -14,7 +14,7 @@
           </thead>
   
           <tbody>
-            <tr v-for="(data, index) in forms" :key="index" @click="rowClicked(data)">
+            <tr class="clickable-row" v-for="(data, index) in forms" :key="index" @click="rowClicked(data)">
               <td>{{ data.mrn }}</td>
               <td>{{ data.firstname }} {{ data.lastname }}</td>
             </tr>
@@ -44,6 +44,8 @@
       <div class="col-8">
   
         <gmap-map :center="center" ref="map" :zoom="1" style="width:100%;  height: 95%;">
+          <gmap-marker v-for="m in locations[0]" :position.sync="m.position" :clickable="true" :draggable="false" @g-click="center=m.position">
+          </gmap-marker>
           <gmap-marker v-for="m in locations" :position.sync="m.position" :clickable="true" :draggable="false" @g-click="center=m.position">
           </gmap-marker>
         </gmap-map>
@@ -123,6 +125,10 @@
     methods: {
   
       rowClicked: function(data) {
+  
+        $('#mrnTable').on('click', '.clickable-row', function(event) {
+          $(this).addClass('bg-selected').siblings().removeClass('bg-selected');
+        });
   
         var selectedMRN = data.mrn
   
@@ -212,6 +218,10 @@
   .container-fluid,
   .location {
     height: 100%;
+  }
+  
+  .bg-selected {
+    background-color: #dbd8d8;
   }
   
   .iziToast {
