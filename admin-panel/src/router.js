@@ -7,34 +7,38 @@ import Cargo from './components/Cargo.vue'
 import Location from './components/Location.vue'
 import Drivetimes from './components/Drivetimes.vue'
 
-
-
 Vue.use(Router)
 
 export default new Router({
+  mode: 'history',
   routes: [
     {
       path: '/',
+      title: 'Dasboard',
       name: 'dashboard',
       component: Dashboard
     },
     {
-      path: '/driver',
+      path: '/chauffeurs',
+      title: 'Chauffeurs',
       name: 'driver',
       component: Driver
     },
     {
-      path: '/cargo',
+      path: '/vrachten',
+      title: 'Vrachten',
       name: 'cargo',
       component: Cargo
     },
     {
-      path: '/location',
+      path: '/routes',
+      title: 'Routes',
       name: 'location',
       component: Location
     },
     {
-      path: '/Drivetimes',
+      path: '/rijtijden',
+      title: 'Rijtijden',
       name: 'Drivetimes',
       component: Drivetimes
     }

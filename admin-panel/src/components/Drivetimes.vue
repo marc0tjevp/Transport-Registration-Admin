@@ -24,25 +24,25 @@
     </div>
   
     <!-- Detail Modal -->
-    <div class="modal fade" id="detailModal" tabindex="-1" role="dialog">
+    <div class="modal fade" ref="detailModal" id="detailModal" tabindex="-1" role="dialog">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
           <div class="modal-header">
             <h5 class="modal-title">{{ detailModalProps.firstname }} {{ detailModalProps.lastname }}</h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close"></button>
           </div>
-          <div class="modal-body">
+          <div v-if="mrnID.length > 0" class="modal-body">
   
+            <form>
+              <div class="form-group">
+                <label for="cargo">Selecteer een vracht</label>
+                <select class="form-control" name="cargo" v-model="selected" @change="getDrivetimeByMrn(selected)">
+                        <option v-for="(driverData, index) in mrnID" :key="index" >{{driverData.mrn}}</option>
+                      </select>
+              </div>
+            </form>
   
-            <div class="form-group">
-              <select class="form-control" v-model="selected" @change="getDrivetimeByMrn(selected)">
-                      <option v-for="(driverData, index) in mrnID" :key="index" >
-                        {{driverData.mrn}}
-                      </option>
-                    </select>
-            </div>
-  
-            <table class="table table-striped table-bordered">
+            <table v-if="drivesByMrn.length > 0" class="table table-striped table-bordered">
               <thead>
                 <th>Startijd</th>
                 <th>Eindtijd</th>
@@ -57,7 +57,18 @@
               </tbody>
             </table>
   
+            <div v-else>
+              <div v-if="selected">
+                <p>Er zijn geen rijtijden voor deze vracht</p>
+              </div>
+            </div>
+            
           </div>
+  
+          <div v-else class="modal-body">
+            <p>Geen beschikbare vrachten voor deze chauffeur</p>
+          </div>
+  
         </div>
       </div>
     </div>
@@ -124,6 +135,11 @@
     },
     methods: {
       rowClicked: function(data) {
+  
+        $('form').find('input[type=select], select').val('')
+        this.selected = ''
+        this.drivesByMrn.splice(0, this.drivesByMrn.length)
+  
         this.detailModalProps.mrn = data.mrn
         this.detailModalProps.firstname = data.firstname
         this.detailModalProps.lastname = data.lastname
@@ -157,8 +173,6 @@
           })
       },
   
-  
-  
       getMrnByID: function(paramOne) {
         this.mrnID.splice(0, this.mrnID.length)
         fetch('http://localhost:8080/company/getbyid/' + paramOne)
@@ -166,31 +180,30 @@
           .then(mrnData => {
             this.mrnID = mrnData.message
           })
-  
       },
   
       getDrivetimeByMrn: function(paramtwo) {
-        // this.drivesByMrn.splice(0, this.drivesByMrn.length)
         fetch('http://localhost:8080/drivetimes/getdrivebymrn/' + paramtwo)
           .then(mrnData => mrnData.json())
           .then(mrnData => {
-            this.drivesByMrn = mrnData.message
-  
+            if (Array.isArray(mrnData.message)) {
+              this.drivesByMrn = mrnData.message
+            } else {
+              this.drivesByMrn = []
+            }
+            console.log(mrnData.message)
           })
       }
     },
   
-  
     created: function() {
-  
       this.getAllDrivers()
-  
     },
-  
   
     mounted: function() {
       this.checkUserConnection()
       this.checkApiConnection()
+  
     }
   }
 </script>
