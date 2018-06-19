@@ -2,7 +2,7 @@
   <div class="driver">
   
     <div class="holder">
-        <table class="table table-bordered table-hover">
+      <table class="table table-bordered table-hover">
         <thead>
           <tr>
             <th>Naam</th>
@@ -32,36 +32,35 @@
             <button type="button" class="close" data-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
-
-            
+  
+  
             <div class="form-group">
               <select class="form-control" v-model="selected" @change="getDrivetimeByMrn(selected)">
-                  <option v-for="(driverData, index) in mrnID" :key="index" >
-                    {{driverData.mrn}}
-                  </option>
-                </select>
+                      <option v-for="(driverData, index) in mrnID" :key="index" >
+                        {{driverData.mrn}}
+                      </option>
+                    </select>
             </div>
-
-            <p><strong>rit tijden</strong></p>
-          <tbody>
-            <th>Startijd</th>
-            <th>Eindtijd</th>
-            <th>Type</th>
-          <tr v-for="(datat, index) in drivesByMrn" :key="index">
-            <td>{{ datat.startTime }} </td>
-            <td>{{ datat.endTime }} </td>
-            <td>{{ datat.type }} </td>
-          </tr>
-        </tbody>
+  
+            <table class="table table-striped table-bordered">
+              <thead>
+                <th>Startijd</th>
+                <th>Eindtijd</th>
+                <th>Type</th>
+              </thead>
+              <tbody>
+                <tr v-for="(datat, index) in drivesByMrn" :key="index">
+                  <td>{{ datat.startTime }} </td>
+                  <td>{{ datat.endTime }} </td>
+                  <td>{{ datat.type }} </td>
+                </tr>
+              </tbody>
+            </table>
   
           </div>
         </div>
       </div>
     </div>
-
-
-
-
   
     <!-- No Connection Modal -->
     <div class="modal fade" id="noConnectionModal" tabindex="-1" role="dialog">
@@ -72,11 +71,8 @@
             <button type="button" class="close" data-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
-  
             <p>Er kan geen verbinding worden gemaakt met de API.</p>
-  
           </div>
-  
         </div>
       </div>
     </div>
@@ -100,9 +96,9 @@
           drivetimes: '',
           imei: ''
         },
-
+  
         drivetimes: [],
-        mrnID:[],
+        mrnID: [],
         drivesByMrn: [],
         notificationSystem: {
           options: {
@@ -127,13 +123,13 @@
       }
     },
     methods: {
-        rowClicked: function(data) {
+      rowClicked: function(data) {
         this.detailModalProps.mrn = data.mrn
         this.detailModalProps.firstname = data.firstname
         this.detailModalProps.lastname = data.lastname
         this.detailModalProps.username = data.username
         this.detailModalProps.imei = data.imei
-
+  
         $("#detailModal").modal('show')
       },
   
@@ -150,7 +146,7 @@
       },
   
       getAllDrivers: function() {
-        this.drivetimes.splice(0, this.drivetimes.lensuccessgth)
+        this.drivetimes.splice(0, this.drivetimes.length)
         fetch('http://localhost:8080/admin/allUsers')
           .then(data => data.json())
           .then(data => {
@@ -159,38 +155,38 @@
           .catch(function() {
             $("#noConnectionModal").modal('show')
           })
-    },
-
-
-
-    getMrnByID: function(paramOne) {
+      },
+  
+  
+  
+      getMrnByID: function(paramOne) {
         this.mrnID.splice(0, this.mrnID.length)
         fetch('http://localhost:8080/company/getbyid/' + paramOne)
           .then(mrnData => mrnData.json())
           .then(mrnData => {
             this.mrnID = mrnData.message
           })
-      
-    },
-
-    getDrivetimeByMrn: function(paramtwo) {
-      this.drivesByMrn.splice(0, this.drivesByMrn.length)
+  
+      },
+  
+      getDrivetimeByMrn: function(paramtwo) {
+        // this.drivesByMrn.splice(0, this.drivesByMrn.length)
         fetch('http://localhost:8080/drivetimes/getdrivebymrn/' + paramtwo)
           .then(mrnData => mrnData.json())
           .then(mrnData => {
             this.drivesByMrn = mrnData.message
-
+  
           })
-        }
-      },
-
+      }
+    },
+  
   
     created: function() {
-
+  
       this.getAllDrivers()
-
+  
     },
-
+  
   
     mounted: function() {
       this.checkUserConnection()
