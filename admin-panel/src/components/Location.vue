@@ -44,9 +44,9 @@
       <div class="col-8">
   
         <gmap-map :center="center" ref="map" :zoom="1" style="width:100%;  height: 95%;">
-          <gmap-marker v-for="m in locations[0]" :position.sync="m.position" :clickable="true" :draggable="false" @g-click="center=m.position">
+          <gmap-marker v-for="a in addresses" :position.sync="a.position" :clickable="true" :draggable="false " @g-click="center=a.position ">
           </gmap-marker>
-          <gmap-marker v-for="m in locations" :position.sync="m.position" :clickable="true" :draggable="false" @g-click="center=m.position">
+          <gmap-marker v-for="m in locations" :position.sync="m.position" :clickable="true" :draggable="false " @g-click="center=m.position ">
           </gmap-marker>
         </gmap-map>
   
@@ -55,14 +55,14 @@
     </div>
   
     <!-- No Connection Modal -->
-    <div class="modal fade" id="noConnectionModal" tabindex="-1" role="dialog">
-      <div class="modal-dialog" role="document">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title">Connection error</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close"></button>
+    <div class="modal fade " id="noConnectionModal " tabindex="-1 " role="dialog ">
+      <div class="modal-dialog " role="document ">
+        <div class="modal-content ">
+          <div class="modal-header ">
+            <h5 class="modal-title ">Connection error</h5>
+            <button type="button " class="close " data-dismiss="modal " aria-label="Close "></button>
           </div>
-          <div class="modal-body">
+          <div class="modal-body ">
             <p>Er kan geen verbinding worden gemaakt met de API.</p>
           </div>
         </div>
@@ -79,9 +79,13 @@
       return {
         forms: [],
         locations: [],
+        addresses: [],
         center: {
           lat: 0,
           lng: 0
+        },
+        mapPin: {
+          url: '../assets/address-marker.svg',
         },
         form: {
           declarationID: '',
@@ -132,6 +136,49 @@
   
         var selectedMRN = data.mrn
   
+        fetch('http://localhost:8080/customs/form/' + selectedMRN)
+          .then(formData => formData.json())
+          .then(formData => {
+  
+            let addressArray = []
+            let tempArray = []
+  
+            let origin = formData.message.addressOrigin
+            let destination = formData.message.addressDestination
+  
+            addressArray.push(origin)
+            addressArray.push(destination)
+  
+            let geocoder = new google.maps.Geocoder()
+  
+            addressArray.forEach(function(obj) {
+  
+              // Get Lat and Long
+              geocoder.geocode({
+                'address': obj
+              }, function(results, status) {
+                if (status == google.maps.GeocoderStatus.OK) {
+  
+                  var latitude = results[0].geometry.location.lat()
+                  var longitude = results[0].geometry.location.lng()
+  
+                  // Create new object from array items
+                  var location = {
+                    "position": {
+                      "lng": longitude,
+                      "lat": latitude,
+                    }
+                  }
+  
+                  // Add them to temporary array
+                  tempArray.push(location)
+  
+                }
+              })
+            })
+            this.addresses = tempArray
+          })
+  
         fetch('http://localhost:8080/location/get/' + selectedMRN)
           .then(data => data.json())
           .then(data => {
@@ -158,17 +205,22 @@
   
             this.locations = tempArray
   
-            var bounds = new google.maps.LatLngBounds();
-            this.locations.forEach((marker) => {
-              bounds.extend(new google.maps.LatLng(marker.position.lat, marker.position.lng));
-            });
-            this.$refs.map.fitBounds(bounds);
+            var bounds = new google.maps.LatLngBounds()
   
-            // this.locations = data.message
+            // this.locations.forEach((marker) => {
+            //   bounds.extend(new google.maps.LatLng(marker.position.lat, marker.position.lng))
+            // })
+  
+            this.addresses.forEach((marker) => {
+              bounds.extend(new google.maps.LatLng(marker.position.lat, marker.position.lng))
+            })
+  
+            this.$refs.map.fitBounds(bounds)
           })
           .catch(function() {
             $("#noConnectionModal").modal('show')
           })
+  
       },
   
       checkUserConnection: function() {

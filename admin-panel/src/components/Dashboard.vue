@@ -1,6 +1,5 @@
 <template>
   <div class="dashboard">
-    <h1>// TODO: Implement :)</h1>
   </div>
 </template>
 
