@@ -207,20 +207,22 @@
   
             var bounds = new google.maps.LatLngBounds()
   
-            // this.locations.forEach((marker) => {
+            // this.addresses.forEach((marker) => {
             //   bounds.extend(new google.maps.LatLng(marker.position.lat, marker.position.lng))
             // })
   
-            this.addresses.forEach((marker) => {
+  
+  
+            this.locations.forEach((marker) => {
               bounds.extend(new google.maps.LatLng(marker.position.lat, marker.position.lng))
             })
-  
+            
             this.$refs.map.fitBounds(bounds)
+
           })
           .catch(function() {
             $("#noConnectionModal").modal('show')
           })
-  
       },
   
       checkUserConnection: function() {

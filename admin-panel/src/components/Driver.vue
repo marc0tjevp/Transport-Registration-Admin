@@ -299,7 +299,7 @@
           imei: this.$refs.edit.imei.value,
         }
   
-        if (this.$refs.registration.passwordcheck.value != this.$refs.registration.password.value) {
+        if (this.$refs.edit.passwordcheck.value != this.$refs.edit.password.value) {
           this.$toast.show('Wachtwoorden komen niet overeen', '', this.notificationSystem.options.error)
         } else {
   
