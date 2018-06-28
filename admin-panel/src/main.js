@@ -6,6 +6,14 @@ import VueResource from 'vue-resource';
 
 import VueIziToast from 'vue-izitoast';
 import 'izitoast/dist/css/iziToast.css';
+import * as VueGoogleMaps from "vue2-google-maps";
+
+Vue.use(VueGoogleMaps, {
+  load: {
+    key: "AIzaSyDhW9FqZV46tlSwsGJAOIBxBWnZ_h95DaE",
+    libraries: "places, routes, maps"
+  }
+});
 
 Vue.use(VueResource)
 Vue.use(VeeValidate)

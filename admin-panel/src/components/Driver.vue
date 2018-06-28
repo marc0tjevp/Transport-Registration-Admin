@@ -56,8 +56,7 @@
   
           <div class="modal-footer">
             <a class="btn btn-danger" @click="deleteUser(detailModalProps.userID)"><i class= "fa fa-trash"></i> Verwijderen</a>
-            <a class="btn btn-warning"><i class= "fa fa-edit"></i> Bewerken</a>
-            <a class="btn btn-primary"><i class= "fa fa-map-marker-alt"></i> Locatie</a>
+            <a class="btn btn-warning" @click="editUser(detailModalProps)"><i class= "fa fa-edit"></i> Bewerken</a>
           </div>
   
         </div>
@@ -92,10 +91,6 @@
             <button type="button" class="close" data-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
-  
-            <div v-if="showNotification" class="alert alert-primary" role="alert">
-              {{ notificationText }}
-            </div>
   
             <form @submit.prevent="handleSubmit" ref="registration">
   
@@ -159,6 +154,82 @@
       </div>
     </div>
   
+    <!-- Edit Driver -->
+    <div class="modal fade" id="editModal" data-backdrop="static" tabindex="-1" role="dialog">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Bewerk een chauffeur</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+  
+            <form @submit.prevent="handleSubmitEdit" ref="edit">
+  
+              <div class="card">
+                <div class="card-header">
+                  Persoonsgegevens
+                </div>
+                <div class="card-body">
+                  <div class="form-group d-none">
+                    <label for="userID">ID</label>
+                    <input id="userID" v-model="editModalProps.userID" name="userID" required="required" class="form-control here" type="text">
+                  </div>
+                  <div class="form-group">
+                    <label for="firstname">Voornaam</label>
+                    <input id="firstname" v-model="editModalProps.firstname" name="firstname" required="required" class="form-control here" type="text">
+                  </div>
+                  <div class="form-group">
+                    <label for="lastname">Achternaam</label>
+                    <input id="lastname" v-model="editModalProps.lastname" name="lastname" class="form-control here" required="required" type="text">
+                  </div>
+                </div>
+              </div>
+  
+              <div class="card">
+                <div class="card-header">
+                  Account
+                </div>
+                <div class="card-body">
+                  <div class="form-group">
+                    <label for="username">Gebruikersnaam</label>
+                    <input id="username" v-model="editModalProps.username" name="username" class="form-control here" required="required" type="text">
+                  </div>
+                  <div class="form-group">
+                    <label for="password">Wachtwoord</label>
+                    <input id="password" name="password" class="form-control here" required="required" type="password">
+                  </div>
+                  <div class="form-group">
+                    <label for="passwordcheck">Wachtwoord (bevestiging)</label>
+                    <input id="passwordcheck" name="passwordcheck" class="form-control here" required="required" type="password">
+                  </div>
+                </div>
+              </div>
+  
+              <div class="card">
+                <div class="card-header">
+                  Device
+                </div>
+                <div class="card-body">
+                  <div class="form-group">
+                    <label for="imei">Device ID</label>
+                    <input id="imei" v-model="editModalProps.imei" name="imei" class="form-control here" aria-describedby="imeiHelpBlock" required="required" type="text">
+                    <span id="imeiHelpBlock" class="form-text text-muted">Het device ID kan worden gevonden op het loginscherm in de app.</span>
+                  </div>
+                </div>
+              </div>
+  
+              <div class="modal-footer">
+                <button name="submit" type="submit" class="btn btn-primary">Opslaan</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Annuleren</button>
+              </div>
+            </form>
+  
+          </div>
+        </div>
+      </div>
+    </div>
+  
   </div>
 </template>
 
@@ -170,6 +241,14 @@
         showNotification: false,
         notificationText: '',
         detailModalProps: {
+          userID: '',
+          firstname: '',
+          lastname: '',
+          username: '',
+          password: '',
+          imei: ''
+        },
+        editModalProps: {
           userID: '',
           firstname: '',
           lastname: '',
@@ -208,6 +287,44 @@
       }
     },
     methods: {
+  
+      handleSubmitEdit: function() {
+  
+        var formData = {
+          userID: this.$refs.edit.userID.value,
+          firstname: this.$refs.edit.firstname.value,
+          lastname: this.$refs.edit.lastname.value,
+          username: this.$refs.edit.username.value,
+          password: this.$refs.edit.password.value,
+          imei: this.$refs.edit.imei.value,
+        }
+  
+        if (this.$refs.edit.passwordcheck.value != this.$refs.edit.password.value) {
+          this.$toast.show('Wachtwoorden komen niet overeen', '', this.notificationSystem.options.error)
+        } else {
+  
+          this.$http.put('http://localhost:8080/admin/edituser', formData).then(function(response) {
+            if (response.body) {
+              if (response.status == 200) {
+                $('#editModal').modal('hide')
+                $('.modal').on('hidden.bs.modal', function() {
+                  $(this).find('form')[0].reset()
+                })
+                this.$toast.show('Wijzigingen zijn opgeslagen!', '', this.notificationSystem.options.success)
+                $('#detailModal').modal('hide')
+                this.getAllUsers()
+              }
+            } else {
+              this.$toast.show('Er is iets misgegaan', '', this.notificationSystem.options.error)
+            }
+          }, function(response) {
+            this.$toast.show(response.body.message, '', this.notificationSystem.options.error)
+          })
+  
+        }
+  
+      },
+  
       handleSubmit: function() {
   
         var formData = {
@@ -225,12 +342,11 @@
   
           this.$http.post('http://localhost:8080/auth/register', formData).then(function(response) {
             if (response.body) {
-              if (response.body.msg == 'registered new user') {
+              if (response.status == 200) {
                 $('#registerModal').modal('hide')
                 $('.modal').on('hidden.bs.modal', function() {
                   $(this).find('form')[0].reset();
                 })
-                this.showNotification = false
                 this.$toast.show('Chauffeur is geregistereerd!', '', this.notificationSystem.options.success)
                 this.getAllUsers()
               }
@@ -238,10 +354,21 @@
               this.$toast.show('Er is iets misgegaan', '', this.notificationSystem.options.error)
             }
           }, function(response) {
-            this.$toast.show(response.body.msg, '', this.notificationSystem.options.error)
+            this.$toast.show(response.body.message, '', this.notificationSystem.options.error)
           })
   
         }
+      },
+  
+      editUser: function(data) {
+  
+        this.editModalProps.userID = data.userID
+        this.editModalProps.firstname = data.firstname
+        this.editModalProps.lastname = data.lastname
+        this.editModalProps.username = data.username
+        this.editModalProps.imei = data.imei
+  
+        $("#editModal").modal('show')
       },
   
       deleteUser: function(id) {
@@ -257,12 +384,11 @@
         }).then(function(response) {
           console.log(formData)
           if (response.body) {
-            if (response.body.message == 'Succesfully deleted user') {
+            if (response.status == 200) {
               $('#detailModal').modal('hide')
               this.$toast.show('Chauffeur is verwijderd', '', this.notificationSystem.options.success)
               this.getAllUsers()
             } else {
-              console.log(response.body)
               this.$toast.show("Er is iets mis gegaan", 'Oops!', this.notificationSystem.options.error)
             }
           }
@@ -289,17 +415,17 @@
         this.$http.get('http://localhost:8080').then(function(response) {}).catch(function() {
           this.$toast.show("Response", 'Connectie verbroken!', this.notificationSystem.options.error)
         })
-      }, 
+      },
   
       getAllUsers: function() {
         this.drivers.splice(0, this.drivers.lensuccessgth)
         fetch('http://localhost:8080/admin/allusers')
           .then(data => data.json())
           .then(data => {
-            this.drivers = data
+            this.drivers = data.message
           })
           .catch(function() {
-            $("#noConnectionModal").modal('show')
+            this.$toast.show(response.body.message, '', this.notificationSystem.options.error)
           })
       }
     },
@@ -309,10 +435,8 @@
     },
   
     mounted: function() {
-      setInterval(this.checkUserConnection(), 1000)
-      setInterval(function() {
-        this.checkApiConnection()
-      }.bind(this), 5000)
+      this.checkUserConnection()
+      this.checkApiConnection()
     }
   }
 </script>
